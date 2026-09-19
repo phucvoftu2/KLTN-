@@ -1,0 +1,36 @@
+# Data manipulation & analysis
+pandas
+numpy
+scipy
+scikit-learn
+openpyxl
+xlrd
+
+# File formats
+pyarrow
+
+# Data validation
+pydantic
+
+# Optimization modeling & solvers
+pyomo
+highspy
+pyaugmecon
+
+# Multi-Criteria Decision Making (MCDM)
+scikit-criteria
+
+# Spatial / GIS calculations
+geopy
+
+# Data visualization
+matplotlib
+seaborn
+plotly
+
+# Interactive development & utilities
+jupyter
+ipykernel
+python-dotenv
+requests
+tqdm
