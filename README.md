@@ -1,67 +1,65 @@
-# KLTN — Trade-off Analysis in Personal Care Supply Chain Distribution Network
+# KLTN: Trade-off Analysis in Personal Care Supply Chain Distribution Network
 
 **An Application of an Integrated MOO-MCDM Framework**
 
-Undergraduate thesis (Khóa luận tốt nghiệp) — Foreign Trade University (FTU), Logistics & Supply Chain Management. Based on real distribution-network data from Paragon's ENO project (via CEL Consulting).
+Undergraduate thesis, Foreign Trade University (FTU), Logistics & Supply Chain Management. The case is a personal care FMCG company's distribution network in Java, Indonesia. The company is anonymized in all thesis outputs.
 
-## Problem Statement
+## Problem
 
-Design the 2030 distribution network of a personal care FMCG company across **Java** (single-mode, truck/road transport only) by deciding which candidate last-mile facilities to open, and how to route product from a single factory source through the network to B2B demand clusters — so as to simultaneously minimize total cost, minimize uncovered demand, and minimize CO2 emissions, under demand uncertainty. Modeled as a robust, capacitated, multi-objective mixed-integer linear program (MOMILP).
+Decide which last-mile and regional facilities to open, and how to route product from one factory source through the network to B2B demand nodes, so that three objectives are balanced under demand uncertainty:
 
-## Methodology
+- `f1` total cost (minimize)
+- `f2` uncovered demand, where a node is covered if an open facility reaches it within a lead-time limit (minimize)
+- `f3` CO2 emissions, GLEC framework (minimize)
 
-- **Stage 1 — Mathematical modeling.** Robust MOMILP with the Bertsimas & Sim (2004) budget-of-uncertainty framework (no probability assumptions on demand). Three objectives: `f1` Total Cost, `f2` Uncovered Demand (MCLP-style coverage), `f3` CO2 Emissions (GLEC framework). Implemented in **Pyomo**.
-- **Stage 2 — Pareto optimization.** **AUGMECON2** (Mavrotas & Florios, 2013) generates the exact non-dominated Pareto frontier, solved with **HiGHS**.
-- **Stage 3 — Managerial evaluation.** **TOPSIS** ranks Pareto-optimal network configurations under multiple weighting scenarios (Cost-Driven, Service-Driven, Balanced/Green).
+## Method
 
-Full reasoning behind every scope, modeling, and data decision is logged in [`Decision_Log.md`](./Decision_Log.md) (treat as the single source of truth). The formal model specification (sets, parameters, objectives, constraints, robust counterpart) is in [`Methodology & Result.md`](./Methodology%20&%20Result.md).
+1. **Robust MOMILP** with the Bertsimas & Sim (2004) budget of uncertainty, in Pyomo.
+2. **AUGMECON2** (Mavrotas & Florios, 2013) for the exact Pareto frontier, solved with HiGHS.
+3. **TOPSIS** to rank Pareto solutions under Cost-driven, Service-driven and Balanced weights.
 
-## Scope (current)
+## Scope
 
-- **Geography:** Java only (single-mode truck network)
-- **Channel:** B2B only (B2C dropped entirely)
-- **Product:** single aggregated product (pallet-equivalent volume, no per-SKU dimension)
-- **Time horizon:** built directly on the observed 11-month period (Jan–Nov 2025), no extrapolation/annualization
-- **Candidate facilities ("Depots"):** DEPO + FC + Instant Hub, merged into one open/close decision role
-- **Fixed backbone (always open):** NDC, RDC, DC Direct, DC Satellite
-
-See `Decision_Log.md` §2–§3 for the full rationale behind each of these.
+Java only (truck), B2B only, one aggregated product in pallets, observed Jan–Nov 2025 data. See [Decision_Log.md](./Decision_Log.md) for every decision and its status.
 
 ## Repository structure
 
 ```
-Data Dictionary/
-├── Decision_Log.md          # Source of truth: every scope/modeling/data decision, with rationale
-├── Methodology & Result.md  # Formal model spec (sets, params, objectives, constraints, robust counterpart)
-├── Outline.md                # Model.ipynb build outline
-├── Network Map.md            # ENO network structure (Factory → NDC → RDC/DC/FC → customers)
-├── Data_Dictionary.xlsx      # Column-level documentation for every raw data table used
-├── requirements.txt          # Python dependencies
+├── Raw Data/                  # Source parquet files (not tracked by git)
 ├── Notebook/
-│   ├── Model.ipynb           # Main model notebook (data load → validation → Pyomo model → AUGMECON2 → TOPSIS)
-│   └── Validation.ipynb      # All data cleaning / validation logic (kept separate from Model.ipynb)
-├── Assumption documents/     # Supporting assumption docs (SLA, emission factors, etc.)
-├── CO2/                      # GLEC-based emission factor sourcing
-├── Ship-To Grouping/         # Demand cluster (ship-to group) documentation
-├── Transportation cost/      # Cost-rate methodology notes
-├── Model - Notion/           # Reference: Paragon's real production LP model (structure reference only)
-└── Model Outputs/            # Exported results (Pareto frontier, TOPSIS ranking, etc.)
+│   ├── Validation.ipynb       # Cleaning and validation, run first
+│   └── Model.ipynb            # Parameters, Pyomo model, AUGMECON2, TOPSIS
+├── Document/                  # Company working documents (reference only, not for sharing)
+│   ├── Assumption documents/
+│   ├── CO2/
+│   ├── Lead time/
+│   ├── Model - Notion/
+│   ├── Product Master Cleaning/
+│   ├── Ship-To Grouping/
+│   ├── Transportation cost/
+│   ├── Network Map.md
+│   └── Data_Dictionary.xlsx
+├── Model - Data used/         # Cleaned data written by Validation.ipynb (not tracked)
+├── Model Outputs/             # Pareto set, TOPSIS ranking, figures
+├── Decision_Log.md            # Scope, modeling and data decisions
+├── Methodology & Result.md    # Formal method and results, written as stages complete
+├── Outline.md                 # Model.ipynb outline
+├── Backlog.md                 # Scope contingencies to revisit
+└── requirements.txt
 ```
-
-Raw data files (`*.parquet`, `*.csv`) are **not tracked** in this repo (see `.gitignore`) — they come from CEL's internal ENO project data and are not meant to be committed.
 
 ## Setup
 
 ```bash
-pip install -r "Data Dictionary/requirements.txt"
+pip install -r requirements.txt
 ```
 
-Toolchain: Python — Pyomo + pyaugmecon + HiGHS + scikit-criteria.
+Run `Notebook/Validation.ipynb` first, then `Notebook/Model.ipynb`.
 
-## Status
+## Status (2026-10-04)
 
-Data ingestion, demand aggregation, and facility/cost parameter validation (`Model.ipynb` §3–§4) are in progress. Pyomo model build (`f1` single-objective first, per `Decision_Log.md` §1.1 build sequencing), AUGMECON2, and TOPSIS stages are not yet implemented. See `Decision_Log.md` §7 "Open Items" for the current list of unresolved decisions.
+Topic and data use approved by the company. Data pipeline is being rerun from raw files. Single-objective `f1` model with Γ sensitivity ran on the previous cleaning; it will be rerun on the new clean data. `f2`, `f3`, AUGMECON2 and TOPSIS are not built yet.
 
 ## Author
 
-Phuc1 (Hoàng Phúc) — Logistics & Supply Chain Management, FTU. Supply Chain Consulting Intern at CEL.
+Phuc, Logistics & Supply Chain Management, FTU.
