@@ -45,6 +45,7 @@ Java only (truck), B2B only, one aggregated product in pallets, observed Jan–N
 ├── Methodology & Result.md    # Formal method and results, written as stages complete
 ├── Outline.md                 # Model.ipynb outline
 ├── Backlog.md                 # Scope contingencies to revisit
+├── CLAUDE.md                  # Working rules for Claude Code in this repo
 └── requirements.txt
 ```
 
