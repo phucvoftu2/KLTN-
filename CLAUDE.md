@@ -1,6 +1,6 @@
 # CLAUDE.md
 
-Undergraduate thesis (KLTN, FTU): robust multi-objective distribution network design for a personal care FMCG company in Java. Data comes from a real consulting project; the company has approved its use on condition of full anonymization.
+Undergraduate thesis (KLTN, FTU): robust multi-objective distribution network design for a personal care FMCG company in Indonesia (B2B network). Data comes from a real consulting project; the company has approved its use on condition of full anonymization.
 
 ## Working with the user
 
@@ -25,9 +25,12 @@ Undergraduate thesis (KLTN, FTU): robust multi-objective distribution network de
 ## Layout
 
 - `Raw Data/`: source parquet files, read-only. Never modify or overwrite. Scenario subfolders `0,1_Baseline2025/` and `3_GF_Unconstrained/`.
-- `Notebook/Validation.ipynb`: cleaning and validation, run first. Writes to `Model - Data used/`.
-- `Notebook/Model.ipynb`: parameters, Pyomo model, AUGMECON2, TOPSIS. Reads only from `Model - Data used/`.
-- `Model Outputs/`: Pareto set, rankings, figures.
+- `Coding notebook/Validation.ipynb`, `Coding notebook/Validation_2_Network.ipynb`: **cleaning and validation only**, run first. Write to `Model - Data used/`. No model parameters here (no `d̄`/`d̂`, no coverage sets, no `Γ`).
+- Model chain, one notebook per method step, run in order:
+  1. `Coding notebook/Robust Uncertainty.ipynb`: demand per group × month, `d̄`/`d̂`, demand-uncertainty evidence. Reads `Model - Data used/`, writes `Model Outputs/demand_robust.parquet`, `demand_monthly.parquet`.
+  2. `Coding notebook/Multi-Objective Optimization.ipynb`: parameters, Pyomo robust MILP, `f1`/`f2`/`f3`, AUGMECON2. Reads `Model - Data used/` + notebook 1 output, writes `Model Outputs/pareto.parquet`.
+  3. `Coding notebook/TOPSIS.ipynb`: ranks the Pareto set (3 weight scenarios). Reads notebook 2 output.
+- `Model Outputs/`: outputs of the three model notebooks (demand parameters, Pareto set, rankings, figures).
 - `Document/`: company working documents (methodology notes for cost, CO2, lead time, ship-to grouping, network map, data dictionary).
 - Use paths relative to the repo root (`D:\KLTN\Data`), not the old `Data Dictionary\...` paths.
 
