@@ -5,8 +5,9 @@ Undergraduate thesis (KLTN, FTU): robust multi-objective distribution network de
 ## Working with the user
 
 - The user writes in Vietnamese. Reply in Vietnamese. Thesis documents (`Decision_Log.md`, `Methodology & Result.md`, README) are written in English.
-- Code comments in notebooks follow the existing style: Vietnamese, with `# ===== STEP =====` section headers.
+- Comment every piece of code in Vietnamese: what each line or block does, what each table/column is, and why. Use `# ===== STEP =====` section headers plus line comments and docstrings. The user must understand every line.
 - Timeline is tight: prioritize producing runnable output over polishing.
+- The user runs all notebooks and data checks. Write the code, say what to run and what to look for, then wait for the pasted output. Never execute notebooks or data-inspection scripts yourself, in the foreground or background.
 
 ## Source of truth
 
