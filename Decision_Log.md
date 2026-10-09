@@ -66,7 +66,7 @@ Single source of truth for scope, modeling and data decisions. Rewritten from sc
 | 5.6 | Keep B2B ship-tos present in the ship-to group mapping (all islands). Profile: every ship-to with orders exists in the customer master; 67 ship-tos with orders have no group but carry only 0.1 t (≈0%) → dropped. The 12,430 master ship-tos without a group are essentially the 12,363 with no 2025 orders (inactive) | ✅ |
 | 5.7 | Cost tables: use the GF / Unconstrained scenario for transfer and last-mile (free-flow cost, not forced to historical routes); Baseline tables are forced flow and used only for comparison. Filter both origin and destination to the in-scope facilities (4.2) and demand nodes. Last-mile B2B = union of the GF and root `_Unconstaint` files (identical prices on shared lanes; root file adds 6,104 lanes from existing facilities, GF adds 15). **All GF lane costs are deflated to 2025** with the company's own factors: supply and transfer ÷ 1.1546, last-mile B2B ÷ 1.3280 (verified exact for last-mile: GF = Baseline × 1.328 on every shared lane). Keeps all costs on the same 2025 basis as demand and fixed costs | ✅ |
 | 5.8 | Each cleaning step prints before/after counts and ends with assertions (keys unique, no orphans, no nulls in model inputs) | ✅ |
-| 5.9 | Demand parameters per node: `d̄_k` = mean monthly pallets, `d̂_k` = max monthly minus mean, zero-filled months included | 🔄 |
+| 5.9 | Demand parameters per node: `d̄_k` = mean monthly pallets, `d̂_k` = max monthly minus mean, zero-filled months included. Computed in `Robust Uncertainty.ipynb` (2026-10-06): Σ`d̄` = 9,936 pallets/month, Σ`d̂` = 6,478 (65% of Σ`d̄`); median `d̂/d̄` = 0.66, p95 = 3.4; 2,794 of 3,347 groups order in all 11 months. National monthly total ranges 7,648 (Jan) to 11,934 (Jun), i.e. the worst observed month is only +20% over the mean, far below the +65% if every group peaked at once: groups peak in different months, which is the case for a budgeted (Bertsimas & Sim) rather than worst-case (Soyster) uncertainty set. 17.08 t of ordered demand (3,054 rows, 0.06%) has no ship-to group and is dropped (5.6 reported 0.1 t on delivered kg) | ✅ |
 
 ## 6. Uncertainty and solution method
 
@@ -100,6 +100,7 @@ Single source of truth for scope, modeling and data decisions. Rewritten from sc
 
 | Date | Change |
 |---|---|
+| 2026-10-06 | Model split into three notebooks (Robust Uncertainty → Multi-Objective Optimization → TOPSIS); Validation notebooks are cleaning only. Demand parameters computed (5.9 → ✅) |
 | 2026-10-06 | Title subtitle changed to "An Indonesian Case Study" (1.1) |
 | 2026-10-06 | Lane sets (4.3): main run keeps the company's transfer and last-mile lane sets; their completeness is tested as a sensitivity after `f1` is solved (Backlog §2). Diagnostic cells 2.8c, 2.8d, 2.12c added to `Validation_2_Network.ipynb` |
 | 2026-10-04 (night) | Malaysia excluded (2.1): Malaysian customers, ship-to groups, sales orders and the Malaysian DC are dropped; facility set becomes 53 (1 NDC + 52 decisions). Items about the Malaysian DC (4.2b, handling watch item) become moot |
