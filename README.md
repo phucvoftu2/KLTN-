@@ -6,7 +6,7 @@ Undergraduate thesis, Foreign Trade University (FTU), Logistics & Supply Chain M
 
 ## Problem
 
-Decide which last-mile and regional facilities to open, and how to route product from one factory source through the network to B2B demand nodes, so that three objectives are balanced under demand uncertainty:
+Decide which last-mile and regional facilities to open, and how to route product from one factory source through the network to B2B demand nodes, so that three objectives are balanced:
 
 - `f1` total cost (minimize)
 - `f2` uncovered demand, where a node is covered if an open facility reaches it within a lead-time limit (minimize)
@@ -14,7 +14,7 @@ Decide which last-mile and regional facilities to open, and how to route product
 
 ## Method
 
-1. **Robust MOMILP** with the Bertsimas & Sim (2004) budget of uncertainty, in Pyomo.
+1. **Deterministic MOMILP** in Pyomo (demand = mean monthly pallets; demand sensitivity +10%, +20%).
 2. **AUGMECON2** (Mavrotas & Florios, 2013) for the exact Pareto frontier, solved with HiGHS.
 3. **TOPSIS** to rank Pareto solutions under Cost-driven, Service-driven and Balanced weights.
 

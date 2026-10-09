@@ -8,7 +8,7 @@ Decisions behind this document: see [Decision_Log.md](./Decision_Log.md).
 
 ## 1. Problem statement
 
-*To write.* Which facilities to open and how to route product from the factory through the network to B2B demand nodes in Java, trading off cost, service and CO2 under demand uncertainty.
+*To write.* Which facilities to open and how to route product from the factory through the network to B2B demand nodes in Java, trading off cost, service and CO2.
 
 ## 2. Data and cleaning
 
@@ -35,10 +35,7 @@ Decisions behind this document: see [Decision_Log.md](./Decision_Log.md).
 - `f3` CO2
 
 ### 3.3 Constraints
-*To write.* Flow balance, robust demand, throughput capacity, facility linking, fixed backbone, coverage.
-
-### 3.4 Robust counterpart (Bertsimas & Sim)
-*To write.*
+*To write.* Flow balance, demand satisfaction, throughput capacity, facility linking, fixed backbone, coverage.
 
 ## 4. Solution method
 
@@ -52,7 +49,7 @@ Decisions behind this document: see [Decision_Log.md](./Decision_Log.md).
 
 *Pending.*
 
-### 5.1 Single-objective `f1` and Γ sensitivity
+### 5.1 Single-objective `f1` and demand sensitivity
 ### 5.2 Pareto frontier
 ### 5.3 TOPSIS ranking by weight scenario
 ### 5.4 Selected network configuration

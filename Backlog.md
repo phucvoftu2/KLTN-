@@ -36,4 +36,29 @@
 
 **When to trigger (decided 2026-10-06: run the model first, decide after):** after `f1` is solved, check (a) how many facilities are kept open only because they are the sole facility of one of the 217 single-source groups, (b) whether cost is sensitive to the transfer lane set (cell 2.8d), (c) whether the lead-time table has distances for missing pairs (cell 2.12c). Extend lanes only if (a) or (b) shows a material effect, and report it as a sensitivity analysis.
 
-**Status:** option, not active. Main pipeline uses the company's lane costs (`Decision_Log.md` 4.3, 5.7).
+**Status:** activated 2026-10-09 for last-mile (`Decision_Log.md` 4.3a). Transfer lanes still the Company's 369.
+
+---
+
+## 3. Option: robust demand (Bertsimas & Sim) (added 2026-10-09)
+
+**Why this is here:** the robust layer was dropped on 2026-10-09 (`Decision_Log.md` 1.3) because the Bertsimas & Sim counterpart (dual variables, budget `Γ`, price-of-robustness scan) adds too much complexity for the thesis scope. The model now uses the nominal demand `d_k` and a demand sensitivity (+10%, +20%, `Decision_Log.md` 6.1).
+
+**Already available if it is reopened:** `d̂_k` (max − mean per group, Σ`d̂` = 65% of mean monthly demand) and the evidence that groups peak in different months (national peak only +20% over the mean, 5.9), which is the standard argument for a budgeted uncertainty set.
+
+**When to trigger:** the demand sensitivity changes the chosen network materially (different open facilities) or capacity becomes binding / infeasible at +10–20%. Otherwise mention robust optimization only as future work.
+
+**Status:** option, not active.
+
+---
+
+## 4. Option: split the single product into a few product families (added 2026-10-09)
+
+**Why this is here:** the model uses one aggregated product in pallets (`Decision_Log.md` 2.3). The Company model keeps ~141 product groups because it also optimizes production (lines, COGM), MFC eligibility, inventory opportunity cost and DOS per product group; none of these are in the thesis model, and lane / handling costs are per pallet for every product, so splitting would barely change which facilities open. Splitting into all 141 groups would make the MILP ~50–100× larger, too slow for repeated AUGMECON2 solves.
+
+**If reopened:** split into 3–5 managerially meaningful families (e.g. fast vs slow movers by DOS, or main category), using `ProductGroupID` in `demand_b2b.parquet` and DOS per facility × product group (`ENO_DOS`). Gains: more accurate capacity (product-specific DOS) and CO2 (product-specific weight).
+
+**When to trigger:** only after `f1`, `f2`, `f3` and AUGMECON2 run end to end on the single product, and if time allows. Otherwise mention as future work.
+
+**Status:** option, not active. Decided 2026-10-09: single product first.
+

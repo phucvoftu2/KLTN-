@@ -1,6 +1,6 @@
 # CLAUDE.md
 
-Undergraduate thesis (KLTN, FTU): robust multi-objective distribution network design for a personal care FMCG company in Indonesia (B2B network). Data comes from a real consulting project; the company has approved its use on condition of full anonymization.
+Undergraduate thesis (KLTN, FTU): multi-objective distribution network design for a personal care FMCG company in Indonesia (B2B network). Data comes from a real consulting project; the company has approved its use on condition of full anonymization.
 
 ## Working with the user
 
@@ -12,7 +12,7 @@ Undergraduate thesis (KLTN, FTU): robust multi-objective distribution network de
 ## Source of truth
 
 - [Decision_Log.md](./Decision_Log.md) holds every scope, modeling and data decision with a status (✅ decided, 🔄 re-validate, ❓ open). Read it before proposing changes. Do not re-litigate ✅ items. When a decision is made or changed, update the log and its change log in the same turn.
-- The method chain is fixed: **Bertsimas & Sim robust MOMILP → AUGMECON2 → TOPSIS**. Toolchain: Pyomo, HiGHS (`appsi_highs`), pyaugmecon, scikit-criteria (not pymcdm).
+- The method chain is fixed: **deterministic MOMILP → AUGMECON2 → TOPSIS** (Bertsimas & Sim robust layer dropped 2026-10-09, Decision_Log 1.3; demand = `d_k`). Toolchain: Pyomo, HiGHS (`appsi_highs`), pyaugmecon, scikit-criteria (not pymcdm).
 - `f2` is lead-time coverage (MCLP-style, threshold `L_max` days), not distance coverage and not average lead time.
 - `Methodology & Result.md` only receives results that were actually produced by a notebook run. Never fill in numbers that were not computed.
 
@@ -25,10 +25,10 @@ Undergraduate thesis (KLTN, FTU): robust multi-objective distribution network de
 ## Layout
 
 - `Raw Data/`: source parquet files, read-only. Never modify or overwrite. Scenario subfolders `0,1_Baseline2025/` and `3_GF_Unconstrained/`.
-- `Coding notebook/Validation.ipynb`, `Coding notebook/Validation_2_Network.ipynb`: **cleaning and validation only**, run first. Write to `Model - Data used/`. No model parameters here (no `d̄`/`d̂`, no coverage sets, no `Γ`).
+- `Coding notebook/Validation.ipynb`, `Coding notebook/Validation_2_Network.ipynb`: **cleaning and validation only**, run first. Write to `Model - Data used/`. No model parameters here (no `d_k`, no coverage sets).
 - Model chain, one notebook per method step, run in order:
-  1. `Coding notebook/Robust Uncertainty.ipynb`: demand per group × month, `d̄`/`d̂`, demand-uncertainty evidence. Reads `Model - Data used/`, writes `Model Outputs/demand_robust.parquet`, `demand_monthly.parquet`.
-  2. `Coding notebook/Multi-Objective Optimization.ipynb`: parameters, Pyomo robust MILP, `f1`/`f2`/`f3`, AUGMECON2. Reads `Model - Data used/` + notebook 1 output, writes `Model Outputs/pareto.parquet`.
+  1. `Coding notebook/Demand.ipynb`: `d_k` (pallets/year) per group from `demand_b2b.parquet`; demand per group × month from sales orders for descriptive variability statistics only. Reads `Model - Data used/`, writes `Model Outputs/demand.parquet`, `demand_monthly.parquet`.
+  2. `Coding notebook/Multi-Objective Optimization.ipynb`: parameters, Pyomo MILP, `f1`/`f2`/`f3`, AUGMECON2. Reads `Model - Data used/` + notebook 1 output, writes `Model Outputs/pareto.parquet`.
   3. `Coding notebook/TOPSIS.ipynb`: ranks the Pareto set (3 weight scenarios). Reads notebook 2 output.
 - `Model Outputs/`: outputs of the three model notebooks (demand parameters, Pareto set, rankings, figures).
 - `Document/`: company working documents (methodology notes for cost, CO2, lead time, ship-to grouping, network map, data dictionary).
@@ -39,7 +39,8 @@ Undergraduate thesis (KLTN, FTU): robust multi-objective distribution network de
 - `B2B_SO_2025_JantoNov.parquet` is ~2 GB / 25M rows. Always load with `columns=[...]`; never load all 27 columns.
 - Sales orders contain cancelled picking rows re-issued under the same `SOLineID`; including them double-counts demand (see Decision_Log 5.1).
 - Every cleaning step prints before/after row counts and ends with `assert` checks (unique keys, no orphans, no nulls in model inputs). Report how much volume (kg) each filter removes.
-- Volume unit is pallets (`kg / KGPerPallet`); time unit is monthly.
+- Demand source is `Model - Data used/demand_b2b.parquet` (the Company's Baseline 2025 demand, pieces/year per ship-to × product; Decision_Log 5.1), not the sales orders. Sales orders are only for descriptive statistics.
+- Volume unit is pallets = pieces / `QuantityPiecesPerPallet`, converted per product before aggregating (not `kg / KGPerPallet`, which overstates pallets by ~30%); time unit is one year (pallets/year, fixed cost = `FixedStorageCost` per year, capacity `× 360 / DOS`; Decision_Log 2.4).
 - Parquet and CSV are git-ignored; keep it that way.
 
 ## Environment
