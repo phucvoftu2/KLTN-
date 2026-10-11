@@ -13,3 +13,6 @@ venv/
 # Jupyter
 .ipynb_checkpoints/
 
+
+# Gói kết quả để chia sẻ ngoài repo (không commit)
+Model Outputs/Mẹ/

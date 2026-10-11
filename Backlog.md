@@ -62,3 +62,17 @@
 
 **Status:** option, not active. Decided 2026-10-09: single product first.
 
+
+---
+
+## 5. Re-check the CO2 objective `f3` (added 2026-10-11)
+
+**Why this is here:** the emission-minimal Pareto solution opens 52 of 53 facilities (cost 361.65 B IDR/yr, 1,875 tCO2e/yr), which looks counter-intuitive. It follows from how `f3` is built (`Decision_Log.md` 3.3, 3.5): warehouse emissions are charged per tonne handled (5.6 kg/t, DEPO 1.3 kg/t) with no fixed emission per open site, the van last mile carries the highest factor (756 g/t-km vs 360.83 mid mile and 79 first mile), and emission factors are fixed per t-km, so smaller loads after splitting volume over more sites are not penalized. Opening more sites shortens van legs and always lowers `f3` in the model.
+
+**What to check:**
+1. Split `f3` per Pareto option into transport by leg (first / mid / last mile, road vs sea) and warehousing, from `Model Outputs/pareto_flows.parquet`. Confirm the warehousing share (rough hand estimate: about 10% of `f3`, ~260 t/yr) before quoting it.
+2. Re-check the emission factors and the leg assignment against the CEL CO2 note (`Document/CO2`): 360.83 for every facility → facility lane under the tiered flow (4.3d), 79 only for lanes leaving the NDC, sea share of estimated lanes.
+3. Bound the effect of a fixed per-site emission: if all warehousing emissions were fixed per site (~7 t per site per year), going from 37 to 52 sites adds ~105 t vs ~640 t saved, so the direction holds. Recompute with the exact warehousing share from step 1.
+4. Decide: keep `f3` as is and state the limitation in the thesis, or add a fixed per-site term (needs a sourced value and a full re-run of payoff table + AUGMECON2, ~5 h; avoid double counting with the GLEC per-tonne intensity).
+
+**Status:** open. Decided 2026-10-11 to keep `f3` for now and re-check before writing the results chapter.

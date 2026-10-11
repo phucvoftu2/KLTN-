@@ -13,7 +13,7 @@ Undergraduate thesis (KLTN, FTU): multi-objective distribution network design fo
 
 - [Decision_Log.md](./Decision_Log.md) holds every scope, modeling and data decision with a status (✅ decided, 🔄 re-validate, ❓ open). Read it before proposing changes. Do not re-litigate ✅ items. When a decision is made or changed, update the log and its change log in the same turn.
 - The method chain is fixed: **deterministic MOMILP → AUGMECON2 → TOPSIS** (Bertsimas & Sim robust layer dropped 2026-10-09, Decision_Log 1.3; demand = `d_k`). Toolchain: Pyomo, HiGHS (`appsi_highs`), pyaugmecon, scikit-criteria (not pymcdm).
-- `f2` is lead-time coverage (MCLP-style, threshold `L_max` days), not distance coverage and not average lead time.
+- `f2` is the demand-weighted average delivery lead time, days per pallet (p-median form, changed 2026-10-10, Decision_Log 3.2). It is no longer a threshold / coverage measure.
 - `Methodology & Result.md` only receives results that were actually produced by a notebook run. Never fill in numbers that were not computed.
 
 ## Anonymization (hard rule)
