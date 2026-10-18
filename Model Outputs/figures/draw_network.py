@@ -85,7 +85,7 @@ WW, WH = 1.05, 0.72     # cỡ kho vừa
 
 factory(F[0], F[1], 1.4, 0.9)
 warehouse(N[0], N[1], 1.7, 1.2, BLUE, BLUE_D, "NDC", "1 · always open")
-warehouse(R[0], R[1], WW, WH, AMB, AMB_D, "RDC", "9 sites")
+warehouse(R[0], R[1], WW, WH, BLUE, BLUE_D, "RDC", "9 sites · always open")   # RDC luôn mở (Decision_Log 4.2c)
 warehouse(S[0], S[1], WW, WH, AMB, AMB_D, "DC Satellite", "18 sites")
 warehouse(D[0], D[1], WW, WH, AMB, AMB_D, "DC Direct", "7 sites")
 warehouse(L[0], L[1], WW, WH, AMB, AMB_D, "DEPO", "last-mile hub" + NL + "18 sites · cross-dock")
@@ -124,9 +124,10 @@ for p, tgt in [(R, (CX0 - 0.45, 5.95)), (S, (CX0 - 0.45, 5.3)), (D, (CX0 - 0.45,
           rad=-0.12 if p is R else 0.0)
 note(12.4, 6.65, "last mile also possible" + NL + "directly from RDC / DC", color=MUTED, size=8.2)
 
-# NDC giao thẳng cho khách lớn ở gần
-arrow((N[0] + 0.6, N[1] - 0.05), (CX0 - 0.35, CY0 + 0.15), rad=0.38, lw=1.3)
-note(8.2, 0.12, "direct from NDC: large customers within 150 km")
+# NDC -> DEPO trong 150 km (tuyến kho -> kho). NDC không giao thẳng cho khách B2B (Decision_Log 4.3f)
+arrow((N[0] + 0.9, N[1] + 0.55), left(L))
+note(7.0, 3.82, "mid mile ≤ 150 km")
+note(8.2, 0.12, "NDC does not deliver to customers directly", color=MUTED, size=8.2)
 
 # ---------- chú thích ----------
 lx, ly = 0.3, -0.3
